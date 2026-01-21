@@ -1,23 +1,54 @@
 <script setup>
-    import { ref } from 'vue';
-
-    let message = ref('I need help'); //Ref updateib kõike, mis kasutab seda kui see muutub
-
-    function input(event)
-    {
-        console.log(event.target.value);
-        message.value = event.target.value;
+    import { computed, ref } from 'vue';
+    let i = 1;
+    let items = ref([
+        {id: i++, text: 'Sai', isDone: true },
+        {id: i++, text: 'Piim', isDone: false },
+        {id: i++, text: 'Viin', isDone: true },
+        {id: i++, text: 'Õlu', isDone: false },
+    ]);
+    let newItem = ref('');
+    
+    let doneItems = computed(() => items.value.filter(i => i.isDone));
+    
+    function add() {
+        if(newItem.value.trim() !== ''){
+            items.value.push({id: i++, text: newItem.value.trim(), isDone: false });
+        }
+        newItem.value = '';
     }
-</script>
-
-<template>
-    <div class="container">
-        <h1>{{ message }}</h1>
-        <button class="button is primary" v-on:click="message = 'I need sleep!'">This is a button</button>
-        <input class="input" v-bind:value="message" v-on:input="input">
-    </div>
-</template>
-
-<style>
-
-</style>
+    </script>
+    
+    <template>
+        <div class="container">
+            <div class="field has-addons mt-2">
+                <div class="control is-expanded">
+                    <input class="input" type="text" v-model="newItem" @keypress.enter="add">
+                </div>
+                <div class="control">
+                    <button class="button is-info" @click="add">
+                        Add Item
+                    </button>
+                </div>
+            </div>
+            <div class="content">
+                <h1>All Items</h1>
+                <ul>
+                    <li v-for="item in items">
+                        {{ item.text }}
+                        <input type="checkbox" v-model="item.isDone">
+                    </li>
+                </ul>
+    
+                <h1>Done Items</h1>
+                <ul>
+                    <li v-for="item in doneItems">
+                        {{ item.text }}
+                        <input type="checkbox" v-model="item.isDone">
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </template>
+    
+    <style></style>
